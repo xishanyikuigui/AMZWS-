@@ -101,6 +101,7 @@ export default function ReorderPanel({ sqpRows, adsRows, sqpSourceSheet, adsSour
     if (!exportReady) return;
     const monthModels = [model.month1, model.month2, model.month3, model.month4, model.month5];
     const values = (keys: (keyof Inputs)[]) => keys.map((key) => inputs[key] === '' ? '' : Number(inputs[key]));
+    const coreSectionTitle = '搜索绩效核心关键词 Top 10（按出单占比降序）';
     const decisionRows: (string | number)[][] = [
       ['新品返单决策报告'],
       ['导出时间', new Date().toLocaleString('zh-CN'), '产品上架月份', listingMonth || '未填写'],
@@ -132,7 +133,7 @@ export default function ReorderPanel({ sqpRows, adsRows, sqpSourceSheet, adsSour
       ['建议下单量', model.orderQty ?? ''],
       ['返单公式', '最近五个月销量 + 安全库存 − 首批下单量'],
       [],
-      ['搜索绩效核心关键词 Top 10'],
+      [coreSectionTitle],
       ['核心关键词', '搜索总量', '本品 CVR', '大盘 CVR', '出单占比', 'Ci / 流量力', 'Bi / 承接力', '判断'],
       ...coreKeywords.map((row) => [row.kw, row.qc, row.asinCVR, row.marketCVR, row.buyShare, row.clickImpRatio, row.buyClickRatio, row.asinCVR >= row.marketCVR && row.clickImpRatio > 1 && row.buyClickRatio > 1 ? '漏斗更精准' : '待优化']),
       [],
@@ -148,7 +149,7 @@ export default function ReorderPanel({ sqpRows, adsRows, sqpSourceSheet, adsSour
     const healthTitleRow = rowOf('近30天产品经营指标');
     const adDetailTitleRow = rowOf('广告反推销量明细');
     const conclusionTitleRow = rowOf('返单结论');
-    const coreTitleRow = rowOf('搜索绩效核心关键词 Top 10');
+    const coreTitleRow = rowOf(coreSectionTitle);
     const adsTitleRow = rowOf('广告关键词 Top 10（按出单占比）');
     const sourceRow = rowOf('数据源说明');
     decisionSheet['!cols'] = [{ wch: 30 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }];
@@ -181,7 +182,7 @@ export default function ReorderPanel({ sqpRows, adsRows, sqpSourceSheet, adsSour
     percentRanges.forEach((range) => {
       const decoded = XLSX.utils.decode_range(range);
       for (let row = decoded.s.r; row <= decoded.e.r; row += 1) for (let col = decoded.s.c; col <= decoded.e.c; col += 1) {
-        const cell = decisionSheet[XLSX.utils.encode_cell({ r: row, c: col })]; if (cell) cell.z = '0.0%';
+        const cell = decisionSheet[XLSX.utils.encode_cell({ r: row, c: col })]; if (cell) cell.z = '0.00%';
       }
     });
     XLSX.utils.book_append_sheet(workbook, decisionSheet, '返单决策');
